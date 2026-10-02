@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Telegraf, Markup, session } = require('telegraf');
+const http = require('http');
 
 if (!process.env.BOT_TOKEN) {
   console.error('FATAL ERROR: BOT_TOKEN is missing in environment variables!');
@@ -7,6 +8,15 @@ if (!process.env.BOT_TOKEN) {
 }
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+// Render-এর Port Binding সমস্যার সমাধানের জন্য হেলথ-চেক সার্ভার
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Global PDF Tools Bot is active!');
+}).listen(PORT, () => {
+  console.log(`🌐 Server is listening on port ${PORT}`);
+});
 
 // Session Middleware (ইউজার সেশন সংরক্ষণের জন্য)
 bot.use(session());
